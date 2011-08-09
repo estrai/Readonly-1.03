@@ -337,12 +337,14 @@ sub Hash (\%;@)
 # Common entry-point for all supported data types
 eval q{sub Readonly} . ( $] < 5.008 ? '' : '(\[$@%]@)' ) . <<'SUB_READONLY';
 {
+
     if (ref $_[0] eq 'SCALAR')
     {
         croak $MODIFY if is_sv_readonly ${$_[0]};
         my $badtype = _is_badtype (ref tied ${$_[0]});
         croak "$REASSIGN $badtype" if $badtype;
         croak "Readonly scalar must have only one value" if @_ > 2;
+        croak q{Readonly value cannot be a reference} if ref $_[1];
 
         my $tieobj = eval {tie ${$_[0]}, 'Readonly::Scalar', $_[1]};
         # Tie may have failed because user tried to tie a constant, or we screwed up somehow.

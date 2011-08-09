@@ -73,7 +73,6 @@ SKIP:
 	eval q{Readonly my %roh2 => {key1 => "value", key2 => "value2"}; $roh2{key1}="value"};
 	like $@ => $expected, 'Modify hash';
 
-	my $rohr;
-	eval q{Readonly $rohr => {key => 123};$rohr->{key}++ };
-	is $rohr->{key} => 123, 'Hash key not modified, good';
+	eval q{Readonly my $rohr => {key => 123}};
+	like $@ => qr{Readonly value cannot be a reference};
 };
